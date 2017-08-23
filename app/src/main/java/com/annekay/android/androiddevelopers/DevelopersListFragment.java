@@ -2,19 +2,27 @@ package com.annekay.android.androiddevelopers;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +59,93 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         listView.setAdapter(developersAdapter);
 
         detectNetworkState();
+
+         /*
+        * create an onclick listener to the developers in the listview
+        * each click on the items takes the user to the developer's profile details
+         */
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Developer currentDeveloper = developersAdapter.getItem(position);
+
+                BitmapDrawable bd = (BitmapDrawable) ((ImageView) view.findViewById(R.id.thumbnail))
+                        .getDrawable();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bd.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] imageByte = baos.toByteArray();
+
+                userNameDetail = currentDeveloper.getUserName();
+                gitHubUrlDetails = currentDeveloper.getGitHubUrl();
+
+
+                // Getting the orientation ( Landscape or Portrait ) of the screen */
+                int orientation = getResources().getConfiguration().orientation;
+
+
+                // Landscape Mode */
+                if(orientation == Configuration.ORIENTATION_LANDSCAPE ){
+                    // Getting the fragment manager
+
+
+                    /** Getting the fragmenttransaction object, which can be used to add, remove or replace a fragment */
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
+                    /** Getting the existing detailed fragment object, if it already exists.
+                     *  The fragment object is retrieved by its tag name
+                     * */
+                    Fragment prevFrag = getFragmentManager().findFragmentByTag("developers.details");
+
+                    /** Remove the existing detailed fragment object if it exists */
+                    if(prevFrag!=null)
+                        fragmentTransaction.remove(prevFrag);
+
+                    /** Instantiating the fragment CountryDetailsFragment */
+                    DeveloperDetailsFragment fragment = new DeveloperDetailsFragment();
+
+                    /** Creating a bundle object to pass the data(the clicked item's position) from the activity to the fragment */
+                    Bundle b = new Bundle();
+
+                    /** Setting the data to the bundle object */
+
+                    b.putString("userName", userNameDetail);
+                    b.putString("gitHubUrl", gitHubUrlDetails);
+                    b.putByteArray("image", imageByte);
+                    //b.putString("profileImage", bitmap);
+                    //b.putString("profileImage", currentDeveloper.getThumbnailUrl());
+//                    developer.setGitHubUrl(currentDeveloper.getGitHubUrl());
+//                    developer.setThumbnailUrl(currentDeveloper.getThumbnailUrl());
+//                    developer.setUserName(currentDeveloper.getUserName());
+
+                    /** Setting the bundle object to the fragment */
+                    fragment.setArguments(b);
+
+                    /** Adding the fragment to the fragment transaction */
+                    fragmentTransaction.add(R.id.detail_fragment_container, fragment,"developers.details");
+
+                    /** Adding this transaction to backstack */
+                    fragmentTransaction.addToBackStack(null).commit();
+
+                    /** Making this transaction in effect */
+                    // fragmentTransaction.commit();
+                }else{
+                    /** Portrait Mode or Square mode */
+                    /** Creating an intent object to start the CountryDetailsActivity */
+                    Intent intent = new Intent(getActivity(), DeveloperDetails.class);
+
+                    /** Setting data ( the clicked item's position ) to this intent */
+
+                    intent.putExtra("userName", currentDeveloper.getUserName());
+                    intent.putExtra("gitHubUrl", currentDeveloper.getGitHubUrl());
+                    intent.putExtra("image", imageByte);
+                    // intent.putExtra("imageUrl", currentDeveloper.getThumbnailUrl());
+
+                    /** Starting the activity by passing the implicit intent */
+                    startActivity(intent);
+                }
+            }
+        });
+
 
         return rootView;
     }
