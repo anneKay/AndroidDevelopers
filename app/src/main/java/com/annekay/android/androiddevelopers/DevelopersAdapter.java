@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 /**
@@ -35,12 +37,12 @@ public class DevelopersAdapter extends ArrayAdapter<Developer> {
 
         Developer currentDeveloper = getItem(position);
 
-//        ImageView devImageView = (ImageView) listView.findViewById(R.id.thumbnail);
-//        // thumbnail image
-//        Picasso.with(getContext()).load(currentDeveloper.getThumbnailUrl()).placeholder(R.mipmap.ic_launcher)
-//                .resize(50, 50)
-//                .transform(new ImageTrans())
-//                .into(devImageView);
+        ImageView devImageView = (ImageView) listView.findViewById(R.id.thumbnail);
+        // thumbnail image
+        Picasso.with(getContext()).load(currentDeveloper.getThumbnailUrl()).placeholder(R.mipmap.ic_launcher)
+                .resize(50, 50)
+                .transform(new ImageTrans())
+                .into(devImageView);
         //find the username textview in the list_view
         TextView userName = (TextView) listView.findViewById(R.id.username);
         userName.setText(currentDeveloper.getUserName());
