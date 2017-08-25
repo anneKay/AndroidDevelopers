@@ -35,6 +35,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
     private DevelopersAdapter developersAdapter;
     private static final int JSON_LOADER_ID = 1;
+    ProgressBar developerProgressBar;
     public String thumbNailUrl, userName, gitHubUrl, userNameDetail, gitHubUrlDetails;
     ListView listView;
     TextView feedbackView;
@@ -48,9 +49,10 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_main, container, false);
+        View rootView = inflater.inflate(R.layout.activity_list, container, false);
 
         feedbackView = (TextView) rootView.findViewById(android.R.id.empty);
+        developerProgressBar = (ProgressBar)rootView.findViewById(R.id.determinateBar);
 
         listView = (ListView) rootView.findViewById(R.id.list);
 
@@ -195,14 +197,12 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         if(isConnected){
             getLoaderManager().initLoader(JSON_LOADER_ID, null, this).forceLoad();
         }else {
-            listView.setEmptyView(getView().findViewById(android.R.id.empty));
-            feedbackView.setText("No Internet Connection");
+            feedbackView.setVisibility(View.VISIBLE);
             progressBar();
         }
     }
     public void progressBar(){
-        ProgressBar earthquakeProgress = (ProgressBar) getView().findViewById(R.id.determinateBar);
-        earthquakeProgress.setVisibility(View.GONE);
+        developerProgressBar.setVisibility(View.GONE);
     }
 
 
