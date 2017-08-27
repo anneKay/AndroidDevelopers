@@ -7,14 +7,26 @@
     <!-- Thumbnail Image -->
     <ImageView
         android:id="@+id/thumbnail"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="16dp"
+        android:layout_gravity="center"
         android:layout_marginRight="8dp" />
     <TextView
         android:layout_width="wrap_content"
         android:id="@+id/username"
+        android:text="myusername"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:layout_margin="32dp"/>
+
+        android:layout_gravity="center"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="locate"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:id="@+id/dev_location"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,7 +37,6 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:id="@+id/share_button"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 </LinearLayout>

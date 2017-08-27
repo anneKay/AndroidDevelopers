@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
@@ -40,10 +41,11 @@ import java.util.List;
  */
 public class DevelopersListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Developer>>{
     private static final String JAVA_DEVELOPER = "https://api.github.com/search/users?q=language:java+location:lagos&page=1&per_page=100";
-    private static final String JAVA_DEVELOPERS = "https://api.github.com/search/users?page=3&per_page=100";
+    private static final String JAVA_DEVELOPERS = "https://api.github.com/search/users?page=1&per_page=100";
     /** Tag for the log messages */
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
     private DevelopersAdapter developersAdapter;
+    private static String devLocation;
     private static final int JSON_LOADER_ID = 1;
     ProgressBar developerProgressBar;
     public String thumbNailUrl, userName, gitHubUrl, userNameDetail, gitHubUrlDetails;
@@ -54,6 +56,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     public DevelopersListFragment() {
         // Required empty public constructor
     }
+
 
 
     @Override
@@ -160,6 +163,10 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
                 }
             }
         });
+        Toast.makeText(getContext(), "you are" + getDevLocation() + ", " +
+                "You scored a total of " + " out of 6", Toast.LENGTH_LONG).show();
+
+
 
 
         return rootView;
@@ -169,13 +176,16 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     public Loader<List<Developer>> onCreateLoader(int i, Bundle bundle) {
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String devLocation = sharedPrefs.getString(
+        devLocation = sharedPrefs.getString(
                 getString(R.string.settings_developer_key),
                 getString(R.string.settings_dev_location_default));
         Uri baseUri = Uri.parse(JAVA_DEVELOPERS);
         Uri.Builder uriBuilder = baseUri.buildUpon();
+        Toast.makeText(getContext(),  devLocation + ", " +
+                "You scored a total of " + " out of 6", Toast.LENGTH_LONG).show();
 
-       uriBuilder.appendQueryParameter("q", "language:java location:"+devLocation);
+
+        uriBuilder.appendQueryParameter("q", "language:java location:"+devLocation);
         //uriBuilder.appendQueryParameter("page", "3");
 //        uriBuilder.appendQueryParameter("location", devLocation);
 //        uriBuilder.appendQueryParameter("page", "3");
@@ -248,5 +258,13 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    public static String getDevLocation(){
+        return devLocation;
+    }
+
+
+    public void setDevLocation(String devLocation) {
+        this.devLocation = devLocation;
     }
 }

@@ -1,6 +1,8 @@
 package com.annekay.android.androiddevelopers;
 
 import android.app.Activity;
+import android.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import static com.annekay.android.androiddevelopers.R.id.dev_location;
+
 
 /**
  * Created by HP on 8/23/2017.
@@ -36,6 +41,7 @@ public class DevelopersAdapter extends ArrayAdapter<Developer> {
         }
 
         Developer currentDeveloper = getItem(position);
+        //String mLocation = SettingsActivity.getInstance().getDevLocation();
 
         ImageView devImageView = (ImageView) listView.findViewById(R.id.thumbnail);
         // thumbnail image
@@ -46,7 +52,13 @@ public class DevelopersAdapter extends ArrayAdapter<Developer> {
         //find the username textview in the list_view
         TextView userName = (TextView) listView.findViewById(R.id.username);
         userName.setText(currentDeveloper.getUserName());
+        DevelopersListFragment fragment = new DevelopersListFragment();
+        TextView developerLocation = (TextView) listView.findViewById(dev_location);
+        developerLocation.setText(fragment.getDevLocation());
+
         return listView;
 
     }
+
+
 }

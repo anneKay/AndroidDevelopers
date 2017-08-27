@@ -6,7 +6,7 @@ package com.annekay.android.androiddevelopers;
 
 public class Developer {
     // variables for the custom class
-    private String mUserName, mThumbnailUrl, mGitHubUrl;
+    private String mUserName, mThumbnailUrl, mGitHubUrl, mDevLocation;
     //private byte[] imageByte;
 
     //constructor for the developer.java class
@@ -32,5 +32,7 @@ public class Developer {
         return mGitHubUrl;
     }
 
-
+    public void setmDevLocation(String mDevLocation) {
+        this.mDevLocation = mDevLocation;
+    }
 }
