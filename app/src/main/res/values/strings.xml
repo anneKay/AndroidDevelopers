@@ -8,4 +8,9 @@
     <!-- Settings Activity Title [CHAR LIMIT=NONE] -->
     <string name="settings_title">Developer Settings</string>
 
+    <!-- Strings For Minimum Magnitude Preference [CHAR LIMIT=30] -->
+    <string name="settings_developer_label">Developers\' Location</string>
+    <string name="settings_developer_key" translatable="false">dev_location</string>
+    <string name="settings_dev_location_default" translatable="false">lagos</string>
+
 </resources>

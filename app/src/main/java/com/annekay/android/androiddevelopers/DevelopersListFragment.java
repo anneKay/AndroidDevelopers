@@ -3,17 +3,25 @@ package com.annekay.android.androiddevelopers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +39,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class DevelopersListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Developer>>{
-    private static final String JAVA_DEVELOPERS = "https://api.github.com/search/users?q=language:java+location:lagos";
+    private static final String JAVA_DEVELOPER = "https://api.github.com/search/users?q=language:java+location:lagos&page=1&per_page=100";
+    private static final String JAVA_DEVELOPERS = "https://api.github.com/search/users?page=3&per_page=100";
     /** Tag for the log messages */
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
     private DevelopersAdapter developersAdapter;
@@ -49,7 +59,10 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_list, container, false);
+        View rootView = inflater.inflate(R.layout.activity_main, container, false);
+       setHasOptionsMenu(true);
+
+
 
         feedbackView = (TextView) rootView.findViewById(android.R.id.empty);
         developerProgressBar = (ProgressBar)rootView.findViewById(R.id.determinateBar);
@@ -154,8 +167,25 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<List<Developer>> onCreateLoader(int i, Bundle bundle) {
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String devLocation = sharedPrefs.getString(
+                getString(R.string.settings_developer_key),
+                getString(R.string.settings_dev_location_default));
+        Uri baseUri = Uri.parse(JAVA_DEVELOPERS);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+       uriBuilder.appendQueryParameter("q", "language:java location:"+devLocation);
+        //uriBuilder.appendQueryParameter("page", "3");
+//        uriBuilder.appendQueryParameter("location", devLocation);
+//        uriBuilder.appendQueryParameter("page", "3");
+      // uriBuilder.appendQueryParameter("per_page", "100");
+//
+//        uriBuilder.appendPath("q");
+
+        return new JsonLoader(getActivity(), uriBuilder.toString());
         // TODO: Create a new loader for the given URL
-        return new JsonLoader(getActivity(), JAVA_DEVELOPERS);
+        //return new JsonLoader(getActivity(), JAVA_DEVELOPER);
 
 
     }
@@ -201,9 +231,22 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
             progressBar();
         }
     }
-    public void progressBar(){
+    public void progressBar() {
         developerProgressBar.setVisibility(View.GONE);
     }
-
-
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
