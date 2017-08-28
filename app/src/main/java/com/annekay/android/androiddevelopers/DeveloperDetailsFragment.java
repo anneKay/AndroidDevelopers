@@ -9,6 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,10 +19,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class DeveloperDetailsFragment extends Fragment {
+    String gitHubUrl, userName;
 
 
     public DeveloperDetailsFragment() {
@@ -30,16 +36,19 @@ public class DeveloperDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.list_items, container, false);
+        View rootView = inflater.inflate(R.layout.details_items, container, false);
+        setHasOptionsMenu(true);
+
 
         /** Getting the textview object of the layout to set the details */
         TextView tv = (TextView) rootView.findViewById(R.id.username);
         TextView textview = (TextView) rootView.findViewById(R.id.url);
+        TextView locationText= (TextView) rootView.findViewById(R.id.dev_location);
         ImageView thumbNail = (ImageView) rootView.findViewById(R.id.thumbnail);
-        Button shareButton  = (Button) rootView.findViewById(R.id.share_button);
+        //Button shareButton  = (Button) rootView.findViewById(R.id.share_button);
 
         /** Getting the bundle object passed from MainActivity ( in Landscape mode )  or from
-         *  CountryDetailsActivity ( in Portrait Mode )
+         *  DeveloperDetailsActivity ( in Portrait Mode )
          * */
         Bundle extras = getArguments();
         byte[] b = extras.getByteArray("image");
@@ -49,33 +58,62 @@ public class DeveloperDetailsFragment extends Fragment {
 
 
         /** Getting the clicked item's position and setting corresponding details in the textview of the detailed fragment */
-        final String gitHubUrl = extras.getString("gitHubUrl");
-        tv.setText(extras.getString("userName"));
+        gitHubUrl = extras.getString("gitHubUrl");
+        userName = extras.getString("userName");
+        tv.setText(userName);
         textview.setText(gitHubUrl);
+        //get an instance of the DeveloperListFragment
+        DevelopersListFragment fragment = new DevelopersListFragment();
+        locationText.setText(fragment.getDevLocation());
 
 
         thumbNail.setBackgroundDrawable(background);
-        shareButton.setVisibility(View.VISIBLE);
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //openWebPage(gitHubUrl);
-            }
-        });
+//        shareButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //openWebPage(gitHubUrl);
+//            }
+//        });
 
         return rootView;
 
     }
-    // Method to send an intent to the browser to open up developer web page
-//    public void openWebPage(String url) {
-//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-//            startActivity(intent);
-//        } else {
-//            Toast.makeText(getActivity(), "No application can handle this request."
-//                    + " Please install a web browser", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.detail, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_share) {
+            Intent share = new Intent(android.content.Intent.ACTION_SEND);
+            share.setType("text/plain");
+            share.putExtra(Intent.EXTRA_SUBJECT, "Java Developers");
+            share.putExtra(Intent.EXTRA_TEXT, "Checkout this awesome developer @" + userName +"\n"+ gitHubUrl);
+            startActivity(Intent.createChooser(share, "Share with"));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+    public void shareDevProfile(String url, String userName) {
+        Intent share = new Intent(android.content.Intent.ACTION_SEND);
+        if(share.resolveActivity(getActivity().getPackageManager())!= null) {
+            share.setType("text/plain");
+            share.putExtra(Intent.EXTRA_SUBJECT, "Java Developers");
+            share.putExtra(Intent.EXTRA_TEXT, "Checkout this awesome developer @" + userName +"\n"+ gitHubUrl);
+
+            startActivity(Intent.createChooser(share, "Share with"));
+
+        } else {
+                Toast.makeText(getActivity(), "No application can handle this request.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }
 
