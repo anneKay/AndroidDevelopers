@@ -32,7 +32,4 @@ public class Developer {
         return mGitHubUrl;
     }
 
-    public void setmDevLocation(String mDevLocation) {
-        this.mDevLocation = mDevLocation;
-    }
 }

@@ -136,8 +136,7 @@ public class QueryUtil {
         // Catch the exception so the app doesn't crash, and print the error message to the logs.
         try {
             // Extract the JSONArray associated with the key called "items",
-            // which represents a list of items (or earthquakes).
-            // Create a JSONObject from the JSON response string
+
             JSONObject response = new JSONObject(developerJSON);
             JSONArray developersArray = response.getJSONArray("items");
 

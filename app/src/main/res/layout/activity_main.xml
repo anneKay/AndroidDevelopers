@@ -3,6 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
     android:orientation="vertical">
     <ProgressBar
         android:id="@+id/determinateBar"
@@ -14,15 +16,15 @@
         android:progress="25"/>
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:id="@+id/swipe_container">
 
     <ListView
         android:id="@+id/list"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
         android:layout_height="match_parent"
         android:dividerHeight="2dp"/>
 </android.support.v4.widget.SwipeRefreshLayout>

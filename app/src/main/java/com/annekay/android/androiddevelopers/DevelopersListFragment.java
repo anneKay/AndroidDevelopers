@@ -77,7 +77,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
 
         feedbackView = (TextView) rootView.findViewById(android.R.id.empty);
         developerProgressBar = (ProgressBar)rootView.findViewById(R.id.determinateBar);
-        mSwipeRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.swipe_container);
         //apply different colors to the swipe refresh layout
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
 
@@ -108,24 +108,21 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
                 gitHubUrlDetails = currentDeveloper.getGitHubUrl();
 
 
-                // Getting the orientation ( Landscape or Portrait ) of the screen */
+                // Getting the orientation ( Landscape or Portrait ) of the screen
                 int orientation = getResources().getConfiguration().orientation;
 
 
-                // Landscape Mode */
+                // Landscape Mode
                 if(orientation == Configuration.ORIENTATION_LANDSCAPE ){
                     // Getting the fragment manager
 
 
-                    // Getting the fragmenttransaction object, which can be used to add, remove or replace a fragment */
+                    // Getting the fragmenttransaction object, which can be used to add, remove or replace a fragment
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
-                    /* Getting the existing detailed fragment object, if it already exists.
-                     *  The fragment object is retrieved by its tag name
-                     * */
                     Fragment prevFrag = getFragmentManager().findFragmentByTag("developers.details");
 
-                    // Remove the existing detailed fragment object if it exists */
+                    // Remove the existing detailed fragment object if it exists
                     if(prevFrag!=null)
                         fragmentTransaction.remove(prevFrag);
 
@@ -135,16 +132,16 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
                     // Creating a bundle object to pass the data(the clicked item's position) from the activity to the fragment */
                     Bundle b = new Bundle();
 
-                    //Setting the data to the bundle object */
+                    //Setting the data to the bundle object
 
                     b.putString("userName", userNameDetail);
                     b.putString("gitHubUrl", gitHubUrlDetails);
                     b.putByteArray("image", imageByte);
 
-                    // Setting the bundle object to the fragment */
+                    // Setting the bundle object to the fragment
                     fragment.setArguments(b);
 
-                    // Adding the fragment to the fragment transaction */
+                    // Adding the fragment to the fragment transaction
                     fragmentTransaction.add(R.id.detail_fragment_container, fragment,"developers.details");
 
                     // Adding this transaction to backstack */
@@ -166,10 +163,6 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
                 }
             }
         });
-
-
-
-
         return rootView;
     }
 
@@ -221,6 +214,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onRefresh() {
         detectNetworkState();
+        feedbackView.setVisibility(View.GONE);
     }
 
     @Override
@@ -240,7 +234,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
             getLoaderManager().initLoader(JSON_LOADER_ID, null, this).forceLoad();
         }else {
             feedbackView.setVisibility(View.VISIBLE);
-            feedbackView.setText("No Internt connection");
+            feedbackView.setText("No Internet connection");
             progressBar();
         }
     }

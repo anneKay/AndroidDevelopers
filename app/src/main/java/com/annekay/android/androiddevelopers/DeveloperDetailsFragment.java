@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import static com.annekay.android.androiddevelopers.R.string.details;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -40,7 +42,7 @@ public class DeveloperDetailsFragment extends Fragment {
         setHasOptionsMenu(true);
 
 
-        /** Getting the textview object of the layout to set the details */
+        // Getting the textview object of the layout to set the details
         TextView tv = (TextView) rootView.findViewById(R.id.username);
         TextView textview = (TextView) rootView.findViewById(R.id.url);
         TextView locationText= (TextView) rootView.findViewById(R.id.dev_location);
@@ -57,10 +59,10 @@ public class DeveloperDetailsFragment extends Fragment {
         BitmapDrawable background = new BitmapDrawable(getContext().getResources(), bmp);
 
 
-        /** Getting the clicked item's position and setting corresponding details in the textview of the detailed fragment */
+        // Getting the clicked item's position and setting corresponding details in the textview of the detailed fragment
         gitHubUrl = extras.getString("gitHubUrl");
         userName = extras.getString("userName");
-        tv.setText(userName);
+        tv.setText("@"+userName);
         textview.setText(gitHubUrl);
         //get an instance of the DeveloperListFragment
         DevelopersListFragment fragment = new DevelopersListFragment();
@@ -101,19 +103,7 @@ public class DeveloperDetailsFragment extends Fragment {
 
 
 
-    public void shareDevProfile(String url, String userName) {
-        Intent share = new Intent(android.content.Intent.ACTION_SEND);
-        if(share.resolveActivity(getActivity().getPackageManager())!= null) {
-            share.setType("text/plain");
-            share.putExtra(Intent.EXTRA_SUBJECT, "Java Developers");
-            share.putExtra(Intent.EXTRA_TEXT, "Checkout this awesome developer @" + userName +"\n"+ gitHubUrl);
 
-            startActivity(Intent.createChooser(share, "Share with"));
-
-        } else {
-                Toast.makeText(getActivity(), "No application can handle this request.", Toast.LENGTH_SHORT).show();
-        }
-    }
 
 }
 

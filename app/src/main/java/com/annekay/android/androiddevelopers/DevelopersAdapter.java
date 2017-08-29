@@ -2,6 +2,7 @@ package com.annekay.android.androiddevelopers;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.res.Configuration;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static android.R.attr.orientation;
 import static com.annekay.android.androiddevelopers.R.id.dev_location;
 
 
@@ -25,6 +27,8 @@ public class DevelopersAdapter extends ArrayAdapter<Developer> {
 
     // Tag for log messages
     private static final String LOG_TAG = DevelopersAdapter.class.getSimpleName();
+    public int selectedPos = 0;
+
 
 
     // public constructor for the DevelopersAdapter
@@ -45,8 +49,8 @@ public class DevelopersAdapter extends ArrayAdapter<Developer> {
 
         ImageView devImageView = (ImageView) listView.findViewById(R.id.thumbnail);
         // thumbnail image
-        Picasso.with(getContext()).load(currentDeveloper.getThumbnailUrl()).placeholder(R.mipmap.ic_launcher)
-                .resize(50, 50)
+        Picasso.with(getContext()).load(currentDeveloper.getThumbnailUrl()).placeholder(R.drawable.ic_action_name)
+                .resize(200, 200)
                 .transform(new ImageTrans())
                 .into(devImageView);
         //find the username textview in the list_view
