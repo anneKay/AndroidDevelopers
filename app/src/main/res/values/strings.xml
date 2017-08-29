@@ -5,8 +5,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <!-- Settings Menu Item [CHAR LIMIT=NONE] -->
     <string name="settings_menu_item">Settings</string>
+    <string name="share_item">Share</string>
     <!-- Settings Activity Title [CHAR LIMIT=NONE] -->
     <string name="settings_title">Search Developers By Location</string>
+    <string name="details">Details Info</string>
 
     <!-- Strings For Minimum Magnitude Preference [CHAR LIMIT=30] -->
     <string name="settings_developer_label">Developers\' Location</string>
