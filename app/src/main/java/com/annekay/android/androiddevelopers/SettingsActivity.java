@@ -47,10 +47,4 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
     }
-    public static SettingsActivity getInstance(){
-        return settingsActivity;
-    }
-    public String getDevLocation() {
-        return preferenceString;
-    }
 }
