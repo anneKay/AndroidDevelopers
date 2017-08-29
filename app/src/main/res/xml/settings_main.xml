@@ -6,6 +6,8 @@
     <EditTextPreference
         android:defaultValue="@string/settings_dev_location_default"
         android:inputType="text"
+        android:textStyle="bold"
+        android:textSize="20sp"
         android:key="@string/settings_developer_key"
         android:selectAllOnFocus="true"
         android:title="@string/settings_developer_label" />
