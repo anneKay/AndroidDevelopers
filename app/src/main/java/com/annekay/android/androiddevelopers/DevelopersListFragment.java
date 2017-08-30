@@ -110,10 +110,11 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
 
                 // Getting the orientation ( Landscape or Portrait ) of the screen
                 int orientation = getResources().getConfiguration().orientation;
+                int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
 
 
                 // Landscape Mode
-                if(orientation == Configuration.ORIENTATION_LANDSCAPE ){
+                if(screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE && orientation == Configuration.ORIENTATION_LANDSCAPE){
                     // Getting the fragment manager
 
 
