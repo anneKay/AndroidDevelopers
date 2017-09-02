@@ -41,12 +41,14 @@ import java.util.List;
 
 import static android.R.attr.mode;
 import static android.R.attr.orientation;
+import static android.R.id.empty;
+import static android.support.v7.widget.AppCompatDrawableManager.get;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DevelopersListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Developer>>, SwipeRefreshLayout.OnRefreshListener {
-    private static final String JAVA_DEVELOPER = "https://api.github.com/search/users?q=language:java+location:lagos&page=1&per_page=100";
+public class DevelopersListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Developer>>, SwipeRefreshLayout.OnRefreshListener{
+   // private static final String JAVA_DEVELOPER = "https://api.github.com/search/users?q=language:java+location:lagos&page=1&per_page=100";
     private static final String JAVA_DEVELOPERS = "https://api.github.com/search/users?page=1&per_page=100";
     /** Tag for the log messages */
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -71,11 +73,10 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_main, container, false);
-       setHasOptionsMenu(true);
-
-
+        setHasOptionsMenu(true);
 
         feedbackView = (TextView) rootView.findViewById(android.R.id.empty);
+
         developerProgressBar = (ProgressBar)rootView.findViewById(R.id.determinateBar);
         mSwipeRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.swipe_container);
         //apply different colors to the swipe refresh layout
@@ -187,23 +188,25 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
 
         // TODO: Update the UI with the result
         developersAdapter.clear();
-        if (data != null && !data.isEmpty()) {
-//
-            developersAdapter.addAll(data);
-            mSwipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-            });
-//            listView.setSelection(0);
-//            listView.getSelectedView().setSelected(true);
+        developersAdapter.addAll(data);
+        developersAdapter.notifyDataSetChanged();
+        // check if there is developer data found, if not update the UI with feedback
+        if (developersAdapter.getCount() == 0) {
+            listView.setVisibility(View.GONE);
+            feedbackView.setVisibility(View.VISIBLE);
+        } else {
+            listView.setVisibility(View.VISIBLE);
+            feedbackView.setVisibility(View.GONE);
+        } mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
-        }else {
-            listView.setEmptyView(getView().findViewById(android.R.id.empty));
-        }
         progressBar();
     }
+
 
     @Override
     public void onLoaderReset(Loader<List<Developer>> loader) {
@@ -211,11 +214,11 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         // TODO: Loader reset, so we can clear out our existing data.
         developersAdapter.clear();
     }
-
+//
     @Override
     public void onRefresh() {
         detectNetworkState();
-        feedbackView.setVisibility(View.GONE);
+       // feedbackView.setVisibility(View.GONE);
     }
 
     @Override
@@ -234,6 +237,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         if(isConnected){
             getLoaderManager().initLoader(JSON_LOADER_ID, null, this).forceLoad();
         }else {
+            listView.setEmptyView(getActivity().findViewById(android.R.id.empty));
             feedbackView.setVisibility(View.VISIBLE);
             feedbackView.setText("No Internet connection");
             progressBar();
