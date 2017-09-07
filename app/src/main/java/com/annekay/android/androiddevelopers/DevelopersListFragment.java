@@ -27,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -39,18 +40,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.data;
 import static android.R.attr.mode;
 import static android.R.attr.orientation;
+import static android.R.attr.y;
 import static android.R.id.empty;
+import static android.R.id.list;
 import static android.support.v7.widget.AppCompatDrawableManager.get;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DevelopersListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Developer>>, SwipeRefreshLayout.OnRefreshListener{
-   // private static final String JAVA_DEVELOPER = "https://api.github.com/search/users?q=language:java+location:lagos&page=1&per_page=100";
-    private static final String JAVA_DEVELOPERS = "https://api.github.com/search/users?page=1&per_page=100";
-    /** Tag for the log messages */
+public class DevelopersListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Developer>>, SwipeRefreshLayout.OnRefreshListener {
+
+    /**
+     * Tag for the log messages
+     */
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
     private DevelopersAdapter developersAdapter;
     private static String devLocation;
@@ -62,11 +67,9 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     SwipeRefreshLayout mSwipeRefreshLayout;
 
 
-
     public DevelopersListFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -77,8 +80,8 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
 
         feedbackView = (TextView) rootView.findViewById(android.R.id.empty);
 
-        developerProgressBar = (ProgressBar)rootView.findViewById(R.id.determinateBar);
-        mSwipeRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.swipe_container);
+        developerProgressBar = (ProgressBar) rootView.findViewById(R.id.determinateBar);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
         //apply different colors to the swipe refresh layout
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
 
@@ -89,6 +92,24 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         listView.setAdapter(developersAdapter);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         detectNetworkState();
+
+        Toast.makeText(getActivity().getApplicationContext(), "you have " + developersAdapter.getCount() + " developers", Toast.LENGTH_LONG).show();
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+
+                int topRowVerticalPosition = (listView == null || listView.getChildCount() == 0) ? 0 : listView.getChildAt(0).getTop();
+                mSwipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+
+            }
+        });
 
          /*
         * create an onclick listener to the developers in the listview
@@ -115,7 +136,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
 
 
                 // Landscape Mode
-                if(screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE && orientation == Configuration.ORIENTATION_LANDSCAPE){
+                if (screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE && orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     // Getting the fragment manager
 
 
@@ -125,7 +146,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
                     Fragment prevFrag = getFragmentManager().findFragmentByTag("developers.details");
 
                     // Remove the existing detailed fragment object if it exists
-                    if(prevFrag!=null)
+                    if (prevFrag != null)
                         fragmentTransaction.remove(prevFrag);
 
                     // Instantiating the fragment CountryDetailsFragment */
@@ -144,14 +165,13 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
                     fragment.setArguments(b);
 
                     // Adding the fragment to the fragment transaction
-                    fragmentTransaction.add(R.id.detail_fragment_container, fragment,"developers.details");
+                    fragmentTransaction.add(R.id.detail_fragment_container, fragment, "developers.details");
 
                     // Adding this transaction to backstack */
                     fragmentTransaction.addToBackStack(null).commit();
 
 
-
-                }else{
+                } else {
                     // In Portrait Mode or Square mode */
                     // Creating an intent object to start the CountryDetailsActivity */
                     Intent intent = new Intent(getActivity(), DeveloperDetails.class);
@@ -168,20 +188,19 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         return rootView;
     }
 
+
     @Override
     public Loader<List<Developer>> onCreateLoader(int i, Bundle bundle) {
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        devLocation = sharedPrefs.getString(
-                getString(R.string.settings_developer_key),
-                getString(R.string.settings_dev_location_default));
-        Uri baseUri = Uri.parse(JAVA_DEVELOPERS);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter("q", "language:java location:"+devLocation);
-        return new JsonLoader(getActivity(), uriBuilder.toString());
-        // TODO: Create a new loader for the given URL
-        //return new JsonLoader(getActivity(), JAVA_DEVELOPER);
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            devLocation = sharedPrefs.getString(
+                    getString(R.string.settings_developer_key),
+                    getString(R.string.settings_dev_location_default));
+
+        return new JsonLoader(getActivity());
+
     }
+
     @Override
 
     public void onLoadFinished(Loader<List<Developer>> loader, List<Developer> data) {
@@ -190,6 +209,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         developersAdapter.clear();
         developersAdapter.addAll(data);
         developersAdapter.notifyDataSetChanged();
+        Toast.makeText(getActivity().getApplicationContext(), "you have " + developersAdapter.getCount() + " developers", Toast.LENGTH_LONG).show();
         // check if there is developer data found, if not update the UI with feedback
         if (developersAdapter.getCount() == 0) {
             listView.setVisibility(View.GONE);
@@ -197,28 +217,31 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         } else {
             listView.setVisibility(View.VISIBLE);
             feedbackView.setVisibility(View.GONE);
-        } mSwipeRefreshLayout.post(new Runnable() {
+        }
+        mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(false);
+                if (mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
 
         progressBar();
     }
-
-
+    
     @Override
     public void onLoaderReset(Loader<List<Developer>> loader) {
 
         // TODO: Loader reset, so we can clear out our existing data.
         developersAdapter.clear();
     }
-//
+
+    //
     @Override
     public void onRefresh() {
         detectNetworkState();
-       // feedbackView.setVisibility(View.GONE);
+        // feedbackView.setVisibility(View.GONE);
     }
 
     @Override
@@ -227,33 +250,38 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         progressBar();
     }
 
+
     // method to detect network connectivity
-    public void detectNetworkState(){
+    public void detectNetworkState() {
         ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-        if(isConnected){
+        if (isConnected) {
             getLoaderManager().initLoader(JSON_LOADER_ID, null, this).forceLoad();
-        }else {
+            Toast.makeText(getActivity().getApplicationContext(), "you have " + developersAdapter.getCount() + " developers", Toast.LENGTH_LONG).show();
+        } else {
             listView.setEmptyView(getActivity().findViewById(android.R.id.empty));
             feedbackView.setVisibility(View.VISIBLE);
-            feedbackView.setText("No Internet connection");
+            feedbackView.setText(R.string.feedback);
             progressBar();
         }
     }
+
+
     public void progressBar() {
         developerProgressBar.setVisibility(View.GONE);
     }
 
-   //inflate the menu item if it is present
+    //inflate the menu item if it is present
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -264,9 +292,9 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         }
         return super.onOptionsItemSelected(item);
     }
-    public static String getDevLocation(){
+
+    public static String getDevLocation() {
         return devLocation;
     }
-
 
 }
