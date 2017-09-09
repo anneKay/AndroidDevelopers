@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -60,10 +61,12 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     private DevelopersAdapter developersAdapter;
     private static String devLocation;
     private static final int JSON_LOADER_ID = 1;
+    private  final String jsonUrl= "https://api.github.com/search/users";
     ProgressBar developerProgressBar;
     public String userNameDetail, gitHubUrlDetails;
     ListView listView;
     TextView feedbackView;
+    List<Developer> totalItems;
     SwipeRefreshLayout mSwipeRefreshLayout;
 
 
@@ -80,7 +83,9 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
 
         feedbackView = (TextView) rootView.findViewById(android.R.id.empty);
 
+
         developerProgressBar = (ProgressBar) rootView.findViewById(R.id.determinateBar);
+        totalItems = new ArrayList<>();
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
         //apply different colors to the swipe refresh layout
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
@@ -93,9 +98,13 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         mSwipeRefreshLayout.setOnRefreshListener(this);
         detectNetworkState();
 
-        Toast.makeText(getActivity().getApplicationContext(), "you have " + developersAdapter.getCount() + " developers", Toast.LENGTH_LONG).show();
-
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int visibleThreshold = 5;
+            private int currentPage = 0;
+            private int previousTotalItemCount = 0;
+            private boolean loading = true;
+            private int startingPageIndex = 0;
+
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -104,6 +113,21 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
+                if (totalItemCount < previousTotalItemCount) {
+                    currentPage = startingPageIndex;
+                    previousTotalItemCount = totalItemCount;
+                    if (totalItemCount == 0) { this.loading = true; }
+                }
+
+                if (loading && (totalItemCount > previousTotalItemCount)) {
+                    loading = false;
+                    previousTotalItemCount = totalItemCount;
+                    currentPage++;
+                }
+
+                if (!loading && (firstVisibleItem + visibleItemCount + visibleThreshold) >= totalItemCount ) {
+                    loading = onLoadMore(currentPage + 1, totalItemCount);
+                }
 
                 int topRowVerticalPosition = (listView == null || listView.getChildCount() == 0) ? 0 : listView.getChildAt(0).getTop();
                 mSwipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
@@ -111,11 +135,13 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
             }
         });
 
+
          /*
         * create an onclick listener to the developers in the listview
         * each click on the items takes the user to the developer's profile details
          */
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Developer currentDeveloper = developersAdapter.getItem(position);
@@ -138,7 +164,8 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
                 // Landscape Mode
                 if (screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE && orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     // Getting the fragment manager
-
+                    int initialSelection = 1;
+                    listView.setItemChecked(initialSelection, true);
 
                     // Getting the fragmenttransaction object, which can be used to add, remove or replace a fragment
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -192,12 +219,12 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
     @Override
     public Loader<List<Developer>> onCreateLoader(int i, Bundle bundle) {
 
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            devLocation = sharedPrefs.getString(
-                    getString(R.string.settings_developer_key),
-                    getString(R.string.settings_dev_location_default));
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        devLocation = sharedPrefs.getString(
+                getString(R.string.settings_developer_key),
+                getString(R.string.settings_dev_location_default));
 
-        return new JsonLoader(getActivity());
+        return new JsonLoader(getActivity(), loadMore(1));
 
     }
 
@@ -209,7 +236,7 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         developersAdapter.clear();
         developersAdapter.addAll(data);
         developersAdapter.notifyDataSetChanged();
-        Toast.makeText(getActivity().getApplicationContext(), "you have " + developersAdapter.getCount() + " developers", Toast.LENGTH_LONG).show();
+
         // check if there is developer data found, if not update the UI with feedback
         if (developersAdapter.getCount() == 0) {
             listView.setVisibility(View.GONE);
@@ -229,7 +256,8 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
 
         progressBar();
     }
-    
+
+
     @Override
     public void onLoaderReset(Loader<List<Developer>> loader) {
 
@@ -250,7 +278,24 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         progressBar();
     }
 
+    public boolean onLoadMore(int page, int totalItemsCount) {
+        loadNextDataFromApi(page);
+        return true;
+    }
+    public void loadNextDataFromApi(int offset) {
 
+        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
+        task.execute(loadMore(offset));
+
+    }
+    private String loadMore(int pageNo){
+        Uri baseUri = Uri.parse(jsonUrl);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+        uriBuilder.appendQueryParameter("q", "language:java location:" + getDevLocation());
+        uriBuilder.appendQueryParameter("per_page", "100");
+        uriBuilder.appendQueryParameter("page", ""+pageNo);
+        return uriBuilder.toString();
+    }
     // method to detect network connectivity
     public void detectNetworkState() {
         ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -297,4 +342,26 @@ public class DevelopersListFragment extends Fragment implements LoaderManager.Lo
         return devLocation;
     }
 
+    private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Developer>> {
+
+        @Override
+        protected List<Developer> doInBackground(String... urls) {
+            // Don't perform the request if there are no URLs, or the first URL is null
+            if (urls.length < 1 || urls[0] == null) {
+                return null;
+            }
+
+            List<Developer> result = QueryUtil.fetchDeveloperData(urls[0]);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(List<Developer> data) {
+            if (data != null && !data.isEmpty()) {
+                developersAdapter.addAll(data);
+                developersAdapter.notifyDataSetChanged();
+            }
+        }
+    }
 }
+

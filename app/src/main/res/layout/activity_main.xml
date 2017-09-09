@@ -15,26 +15,33 @@
         android:layout_margin="16dp"
         android:progress="25"/>
     <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:id="@+id/swipe_container">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <ListView
+        <ListView
         android:id="@+id/list"
         android:orientation="vertical"
         android:layout_width="match_parent"
+            android:listSelector="@drawable/list_row_selector"
         android:layout_height="match_parent"
         android:dividerHeight="2dp"/>
-</android.support.v4.widget.SwipeRefreshLayout>
 
-    <TextView android:id="@android:id/empty"
+
+        <TextView android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="No Developer data found"
+        android:text="@string/dev_info"
         android:layout_gravity="center"
+            android:visibility="gone"
         android:gravity="center"
         style="@android:style/TextAppearance.Large" />
+        </FrameLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>
