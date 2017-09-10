@@ -4,15 +4,16 @@
     android:orientation="horizontal"
     android:layout_marginRight="5dp"
     android:layout_marginLeft="5dp"
+    android:background="@drawable/list_row_selector"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!-- Thumbnail Image -->
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/thumbnail"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
         android:layout_gravity="center_vertical" />
@@ -23,7 +24,7 @@
         android:textStyle="bold"
         android:textSize="17sp"
         android:fontFamily="monospace"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="7dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"/>
