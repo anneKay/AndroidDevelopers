@@ -12,24 +12,31 @@
         android:roundIcon="@mipmap/android_dev"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".DeveloperDetails"
-            android:label="@string/details">
+        <activity
+            android:name=".DeveloperDetails"
+            android:label="@string/details"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.annekay.android.androiddevelopers.MainActivity"/>
+                android:parentActivityName="com.annekay.android.androiddevelopers.MainActivity"
+                android:value="com.annekay.android.androiddevelopers.MainActivity" />
         </activity>
-        <activity android:name=".SettingsActivity"
-        android:label="@string/settings_title">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.annekay.android.androiddevelopers.MainActivity"/>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings_title">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.annekay.android.androiddevelopers.MainActivity" />
         </activity>
     </application>
 
