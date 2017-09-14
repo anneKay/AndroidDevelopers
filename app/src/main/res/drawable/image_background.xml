@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <!-- Background circle for the magnitude value -->
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="oval">
+            <size
+                android:width="200dp"
+                android:height="200dp" />
+            <corners android:radius="18dp" />
+        </shape>
+    </item>
+
+
+
+</selector>

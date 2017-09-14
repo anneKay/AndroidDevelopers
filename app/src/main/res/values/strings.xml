@@ -10,6 +10,10 @@
     <string name="settings_title">Search Developers By Location</string>
     <string name="details">Details Info</string>
 
+    <string name="feedback">No Internet Connection</string>
+    <string name="dev_info">No Developer Found In This Location</string>
+
+
     <!-- Strings For Minimum Magnitude Preference [CHAR LIMIT=30] -->
     <string name="settings_developer_label">Developers\' Location</string>
     <string name="settings_developer_key" translatable="false">dev_location</string>

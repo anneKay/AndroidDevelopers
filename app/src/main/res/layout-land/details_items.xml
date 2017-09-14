@@ -1,24 +1,38 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#eee">
+
+    <include
+        layout="@layout/toolbar_main"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:elevation="5dp"
+        android:elevation="3dp"
         android:background="#fafafa">
 
         <!-- Thumbnail Image -->
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/thumbnail"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_marginLeft="36dp"
-            android:layout_gravity="center_vertical" />
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:background="@drawable/image_background"
+            android:layout_margin="16dp"
+            android:layout_gravity="center"/>
         <TextView
             android:layout_width="wrap_content"
             android:id="@+id/username"
@@ -30,23 +44,16 @@
             android:layout_marginBottom="6dp"
             android:layout_marginLeft="36dp"
             android:layout_height="wrap_content" />
-
-
-
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:elevation="5dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="#fafafa"
-            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginTop="16dp"
+                android:background="#fafafa"
+                android:elevation="3dp"
+                android:orientation="horizontal">
+
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -60,6 +67,7 @@
                 android:text="myusername"
                 android:textStyle="bold"
                 android:textSize="24sp"
+                android:clickable="true"
                 android:fontFamily="serif"
                 android:layout_gravity="center"
                 android:layout_marginLeft="16dp"
@@ -67,11 +75,10 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="80dp"
             android:layout_marginTop="16dp"
             android:background="#fafafa"
-            android:orientation="horizontal"
-            android:layout_weight="1">
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -84,9 +91,9 @@
                 android:layout_width="match_parent"
                 android:id="@+id/url"
                 android:textSize="20sp"
-                android:text="yhtreedf"
+                android:textColor="@color/green"
                 android:textIsSelectable="true"
-                android:contextClickable="true"
+                android:clickable="true"
                 android:textStyle="bold"
                 android:paddingLeft="18sp"
                 android:gravity="center_vertical"
@@ -94,5 +101,6 @@
         </LinearLayout>
 
     </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
