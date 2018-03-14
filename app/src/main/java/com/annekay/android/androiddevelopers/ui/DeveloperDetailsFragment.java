@@ -41,7 +41,6 @@ public class DeveloperDetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    @SuppressWarnings("deprecated")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,37 +71,43 @@ public class DeveloperDetailsFragment extends Fragment {
         /** Getting the bundle object passed from MainActivity ( in Landscape mode )  or from
          *  DeveloperDetailsActivity ( in Portrait Mode )
          * */
+
         Bundle extras = getArguments();
-        byte[] b = extras.getByteArray("image");
+        if (getArguments() != null){
+                byte[] b = extras.getByteArray("image");
 
-       Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
-        BitmapDrawable background = new BitmapDrawable(getContext().getResources(), bmp);
+                Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+                BitmapDrawable background = new BitmapDrawable(getContext().getResources(), bmp);
 
-        // Getting the clicked item's position and setting corresponding details in the textview of the detailed fragment
-        gitHubUrl = extras.getString("gitHubUrl");
-        userName = extras.getString("userName");
+                // Getting the clicked item's position and setting corresponding details in the textview of the detailed fragment
+                gitHubUrl = extras.getString("gitHubUrl");
+                userName = extras.getString("userName");
 
-        textview.setText(gitHubUrl);
-        locationText.setText(getDevLocation());
+                textview.setText(gitHubUrl);
+                locationText.setText(getDevLocation());
 
-        // Getting the orientation ( Landscape or Portrait ) of the screen
-        //int orientation = getResources().getConfiguration().orientation;
+                // Getting the orientation ( Landscape or Portrait ) of the screen
+                //int orientation = getResources().getConfiguration().orientation;
 
-        // Landscape Mode
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            TextView tv = (TextView) rootView.findViewById(R.id.username);
-            tv.setText("@"+userName);
-        } else{
-            ((CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar_layout)).setTitle(userName);
-        }
+                // Landscape Mode
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    TextView tv = (TextView) rootView.findViewById(R.id.username);
+                    tv.setText("@"+userName);
+                } else{
+                    ((CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar_layout)).setTitle(userName);
+                }
 
-            thumbNail.setBackgroundDrawable(background);
-        textview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWebPage(gitHubUrl);
+                thumbNail.setBackgroundDrawable(background);
+                textview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openWebPage(gitHubUrl);
+                    }
+                });
+            } else {
+                textview.setText("githuburl");
             }
-        });
+
 
         return rootView;
 
